@@ -94,9 +94,7 @@ Machine: i7-14650HX, 32 GB RAM, Windows 11
  1000 x 1000   |   1000000 |      0.283873 |      0.158790 |     0.56x | MATCH
 
 
-Fill this in from your own `mp2.exe bench` output.
-
-## Analysis
+## Analysis (Original old)
 
 The runtime grows just about linearly with the number of pixels, which makes sense because
 both versions do the same small set of steps for every pixel and nothing else, so the cost is
