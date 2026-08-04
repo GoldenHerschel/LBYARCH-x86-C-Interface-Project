@@ -87,11 +87,12 @@ identical image.
 
 Machine: i7-14650HX, 32 GB RAM, Windows 11
 
-| image size | pixels | asm avg (ms) | C avg (ms) | speedup | asm vs C |
-|---|---|---|---|---|---|
-| 10 x 10 | 100 | | | | MATCH |
-| 100 x 100 | 10,000 | | | | MATCH |
-| 1000 x 1000 | 1,000,000 | | | | MATCH |
+ size          |    pixels |  asm avg (ms) |    C avg (ms) |  speedup | asm vs C
+---------------+-----------+---------------+---------------+----------+---------
+   10 x 10     |       100 |      0.000050 |      0.000030 |     0.60x | MATCH
+  100 x 100    |     10000 |      0.002593 |      0.001470 |     0.57x | MATCH
+ 1000 x 1000   |   1000000 |      0.283873 |      0.158790 |     0.56x | MATCH
+
 
 Fill this in from your own `mp2.exe bench` output.
 
