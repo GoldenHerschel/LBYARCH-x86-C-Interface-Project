@@ -113,3 +113,7 @@ itself, the assembly multiplies by a stored 1/255 constant while the C divides b
 divide is considerably slower than multiply on every x86 core. The rest is that the assembly
 keeps its running values in registers for the whole loop and only touches memory to read a
 pixel and write a float, so there is no stack traffic and a single branch per pixel.
+
+## AI Declaration
+
+Sanidad: AI was used to help better understand the results of two seperate points in the code which were caused by a -O2 and -O0 optimization for gcc. This caused C to be faster than ASM in 02 config but with no flags for optimization ASM was faster. Also was used to comment out or rather organize comments made during the development of the program. This was partly due to a need to complete the program in one go rather than in multiple seatings which made the back and forth of research and development much easier. 
