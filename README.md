@@ -34,7 +34,7 @@ Windows, needs nasm and mingw-w64 gcc on PATH:
 
 ```
 nasm -f win64 imgcvt.asm -o imgcvt.obj
-gcc -O2 main.c imgcvt.obj -o mp2.exe
+gcc main.c imgcvt.obj -o mp2.exe
 ```
 
 Or just run `build.bat`.
@@ -80,30 +80,35 @@ values. All sizes match.
 
 ## Execution time
 
-Timer wraps the conversion call only, nothing else. 30 runs per version per size, plus one
+The timer wraps the conversion call only, nothing else. 30 runs per version per size, plus one
 untimed warmup run so the first timed run is not eating the cold cache cost. Pixels are random
-values from 0 to 255 with a fixed seed so the runs repeat, and both versions are given the
+values from 0 to 255 with a fixed seed so the runs repeat, and both versions are handed the
 identical image.
 
 Machine: i7-14650HX, 32 GB RAM, Windows 11
 
+Default build, `gcc main.c imgcvt.obj -o mp2.exe`
+
  size          |    pixels |  asm avg (ms) |    C avg (ms) |  speedup | asm vs C
 ---------------+-----------+---------------+---------------+----------+---------
-   10 x 10     |       100 |      0.000050 |      0.000030 |     0.60x | MATCH
-  100 x 100    |     10000 |      0.002593 |      0.001470 |     0.57x | MATCH
- 1000 x 1000   |   1000000 |      0.283873 |      0.158790 |     0.56x | MATCH
+   10 x 10     |       100 |      0.000050 |      0.000107 |     2.13x | MATCH
+  100 x 100    |     10000 |      0.002767 |      0.007697 |     2.78x | MATCH
+ 1000 x 1000   |   1000000 |      0.270173 |      0.754643 |     2.79x | MATCH
 
+## Analysis
 
-## Analysis (Original old)
+The runtime grows just about linearly with the number of pixels in both versions, which makes
+sense because each one does the same small set of steps for every pixel and nothing else, so
+the cost is basically per pixel cost times the number of pixels. The 10 x 10 row is the
+exception, its time can show up as 0.000000 ms, which does not mean it was free, it means the
+conversion finished faster than the timer can measure, since QueryPerformanceCounter only ticks
+about every 100 ns. The numbers at that size are noise and should not be read too closely. At
+1000 x 1000 the program moves 5 MB of data per call, since the float output takes up four times
+the space of the uint8 input, and at that point the limit is how fast memory can feed the CPU
+rather than how fast the math runs.
 
-The runtime grows just about linearly with the number of pixels, which makes sense because
-both versions do the same small set of steps for every pixel and nothing else, so the cost is
-basically per pixel cost times the number of pixels. The 10 x 10 result is the exception, its
-time can show up as 0.000000 ms, which does not mean it was free, it means the conversion
-finished faster than the timer can measure, since QueryPerformanceCounter only ticks about
-every 100 ns, so the numbers at that size are noise and should not be read too closely. At
-1000 x 1000 the program is moving 5 MB of data per call, and at that point the limit is how
-fast memory can feed the CPU rather than how fast the math runs, since the float output takes
-up four times the space of the uint8 input. The assembly stays ahead of the pure C version at
-every size, mostly because it multiplies by a stored 1/255 constant instead of dividing by 255,
-and divide is much slower than multiply on every x86 core.
+The assembly stays ahead of the pure C version at every size. Part of that is the conversion
+itself, the assembly multiplies by a stored 1/255 constant while the C divides by 255, and
+divide is considerably slower than multiply on every x86 core. The rest is that the assembly
+keeps its running values in registers for the whole loop and only touches memory to read a
+pixel and write a float, so there is no stack traffic and a single branch per pixel.
