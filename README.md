@@ -88,12 +88,13 @@ identical image.
 Machine: i7-14650HX, 32 GB RAM, Windows 11
 
 Default build, `gcc main.c imgcvt.obj -o mp2.exe`
-
- size          |    pixels |  asm avg (ms) |    C avg (ms) |  speedup | asm vs C
-
-   10 x 10     |       100 |      0.000050 |      0.000107 |     2.13x | MATCH
-  100 x 100    |     10000 |      0.002767 |      0.007697 |     2.78x | MATCH
- 1000 x 1000   |   1000000 |      0.270173 |      0.754643 |     2.79x | MATCH
+```
+size          |    pixels |  asm avg (ms) |    C avg (ms) |  speedup | asm vs C
+---------------+-----------+---------------+---------------+----------+---------
+   10 x 10     |       100 |      0.000050 |      0.000107 |    2.13x | MATCH
+  100 x 100    |     10000 |      0.002767 |      0.007697 |    2.78x | MATCH
+ 1000 x 1000   |   1000000 |      0.270173 |      0.754643 |    2.79x | MATCH
+```
 
 ## Analysis
 
